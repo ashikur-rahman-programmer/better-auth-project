@@ -1,6 +1,13 @@
+"use client";
+import { signOut, useSession } from "@/lib/auth-client";
 import Link from "next/link";
 
 const NavbarPage = () => {
+  const { data, isPending } = useSession();
+  if (isPending) {
+    return <p>loading...</p>;
+  }
+  const user = data?.user;
   return (
     <div>
       <nav className="sticky top-0 z-40 w-full border-b border-separator bg-background/70 backdrop-blur-lg">
@@ -13,12 +20,20 @@ const NavbarPage = () => {
               <Link href="/">Home</Link>
             </li>
             <li>
-              <Link href="dashboard">Dashboard</Link>
+              <Link href="/dashboard">Dashboard</Link>
             </li>
             <li>
-              <Link href="about">About</Link>
+              <Link href="/about">About</Link>
             </li>
           </ul>
+          {user ? (
+            <div>
+              <p>Welcome, {user.name}!</p>
+              <button onClick={() => signOut()}>signOut</button>
+            </div>
+          ) : (
+            <Link href="/auth/signin"></Link>
+          )}
         </header>
       </nav>
     </div>
